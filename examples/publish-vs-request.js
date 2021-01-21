@@ -1,0 +1,40 @@
+
+// Create a request with nats and see what happens
+
+// Create a publish message and see what happens
+
+const NATS = require("nats");
+const nats = NATS.connect('localhost:4222', {json:true});
+
+
+nats.subscribe('mynats.publisher-vs-request', (message, reply, subject, sid) => {
+  console.log('subscribe#mynats.publisher-vs-request', {message, reply, subject, sid});
+  nats.publish(reply, `got message from ${reply}`);
+});
+
+/*
+// Logged from listener
+subscribe#mynats.publisher-vs-request {
+  message: { source: 'request' },
+  reply: '_INBOX.BSQVHYOWG0D6MM9NOIPQT8.BSQVHYOWG0D6MM9NOIPQXF',
+  subject: 'mynats.publisher-vs-request',
+  sid: 1
+}
+
+*/
+nats.request("mynats.publisher-vs-request", {source : "request"}, () => {
+  console.log('request#mynats.publisher-vs-request', {arguments})
+});
+
+/*
+// Logged from listener
+subscribe#mynats.publisher-vs-request {
+  message: { source: 'publish' },
+  reply: 'reply-to-publish',
+  subject: 'mynats.publisher-vs-request',
+  sid: 1
+}
+*/
+nats.publish("mynats.publisher-vs-request", {source : "publish"}, "reply-to-publish", "", () => {
+  console.log('publish#mynats.publisher-vs-request', {arguments})
+});
