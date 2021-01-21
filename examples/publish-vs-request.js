@@ -1,7 +1,10 @@
-
-// Create a request with nats and see what happens
-
-// Create a publish message and see what happens
+/*
+Comparing request and publish
+------------------------------
+If you just want to send data, use publish, if you want ot send data and
+expect a response from server use request.
+request uses publish internally though
+*/
 
 const NATS = require("nats");
 const nats = NATS.connect('localhost:4222', {json:true});
